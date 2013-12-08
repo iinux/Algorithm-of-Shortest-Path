@@ -1,0 +1,48 @@
+class Line
+	attr_accessor :toPoint,:weight
+	def initialize(toPoint,weight)
+		@toPoint=toPoint
+		@weight=weight
+		self
+	end
+	def to_s
+		"<"+@toPoint.to_s+":"+@weight.to_s+">"
+	end
+end
+
+$table=Array.new
+
+size=0
+startPoint=0
+
+File.open("data.txt") do |file|
+	size=file.gets.to_i
+	startPoint=file.gets.to_i
+	(size+1).times{|i| $table.push(Array.new)}
+
+	while line=file.gets
+		linex=line.split(" ")
+		$table[linex[0].to_i].push(Line.new(linex[1].to_i,linex[2].to_i))
+	end
+end
+
+$resultTable=[999]*(size+1)
+$resultTable[startPoint]=0
+
+def go(i)
+	$table[i].map do |j|
+		$duty.push(j.toPoint)
+		if ($resultTable[j.toPoint]>$resultTable[i]+j.weight)
+			$resultTable[j.toPoint]=$resultTable[i]+j.weight
+		end
+	end
+end
+
+$duty=Array.new
+$duty.push(startPoint)
+while (!$duty.empty?)
+	go($duty.shift)
+end
+
+$resultTable.shift
+p $resultTable
