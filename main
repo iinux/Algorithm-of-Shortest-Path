@@ -10,6 +10,18 @@ class Line
 	end
 end
 
+class Node
+	attr_accessor :shortestWeight,:fromPoint
+	def initialize(shortestWeight,fromPoint)
+		@shortestWeight=shortestWeight
+		@fromPoint=fromPoint
+		self
+	end
+	def to_s
+		"<ShortestWeight is "+@shortestWeight.to_s+",and its previous node is "+@fromPoint.to_s+".>"
+	end
+end
+
 $table=Array.new
 
 size=0
@@ -26,14 +38,16 @@ File.open("data.txt") do |file|
 	end
 end
 
-$resultTable=[999]*(size+1)
-$resultTable[startPoint]=0
+$resultTable=Array.new
+(size+1).times{$resultTable.push(Node.new(999,-1))}
+$resultTable[startPoint]=Node.new(0,-1)
 
 def go(i)
 	$table[i].map do |j|
-		$duty.push(j.toPoint)
-		if ($resultTable[j.toPoint]>$resultTable[i]+j.weight)
-			$resultTable[j.toPoint]=$resultTable[i]+j.weight
+		if ($resultTable[j.toPoint].shortestWeight>$resultTable[i].shortestWeight+j.weight)
+			$duty=$duty|[j.toPoint]
+			$resultTable[j.toPoint].shortestWeight=$resultTable[i].shortestWeight+j.weight
+			$resultTable[j.toPoint].fromPoint=i
 		end
 	end
 end
@@ -45,4 +59,4 @@ while (!$duty.empty?)
 end
 
 $resultTable.shift
-p $resultTable
+$resultTable.map { |e| puts e }
